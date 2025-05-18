@@ -32,3 +32,6 @@
 
 ---
 
+## 🖼️ Demo
+
+![InsideOut Screenshot](https://raw.githubusercontent.com/your-username/InsideOut/main/assets/screenshot.png)
