@@ -20,8 +20,8 @@ Supported emotions: Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise.
 # -------------------------
 # Constants & Configuration
 # -------------------------
-MODEL_URL = "https://huggingface.co/your-username/emotion-recognition/resolve/main/emotion_recognition_model.h5"
-MODEL_LOCAL_PATH = "emotion_recognition_model.h5"
+MODEL_URL = "https://huggingface.co/AhsanFarabi/inside_out/resolve/main/inside_out.h5"
+MODEL_LOCAL_PATH = "inside_out.h5"
 CLASS_LABELS = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # -------------------------
