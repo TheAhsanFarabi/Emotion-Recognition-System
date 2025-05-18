@@ -1,4 +1,4 @@
-# 🎭 InsideOut: Real-Time Facial Emotion Recognition using Convolutional Neural Networks and OpenCV Integration
+# 🎭 InsideOut: Facial Emotion Recognition using Convolutional Neural Networks and OpenCV Integration
 
 **InsideOut** is a deep learning-based emotion recognition system that analyzes facial expressions in real-time. Built with a custom-trained CNN model and deployed using OpenCV and Streamlit, this app enables intuitive and interactive emotion detection from images or webcam input.
 
