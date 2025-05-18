@@ -34,4 +34,4 @@
 
 ## 🖼️ Demo
 
-![InsideOut Screenshot](https://raw.github.com/TheAhsanFarabi/InsideOut/main/screenshot.png)
+![InsideOut Screenshot](https://github.com/TheAhsanFarabi/InsideOut/main/screenshot.png)
