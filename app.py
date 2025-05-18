@@ -3,31 +3,55 @@ from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 from PIL import Image
-import tempfile
+import os
+import requests
 
-# Load model and Haar cascade once
+# -------------------------
+# Project Title & Overview
+# -------------------------
+st.set_page_config(page_title="InsideOut: Real-Time Emotion Detection", layout="centered")
+st.title("🎭 InsideOut: An Emotion Recognition System")
+st.markdown("""
+Welcome to **InsideOut**, a real-time emotion recognition system.  
+Upload an image or take a live photo, and let the AI detect facial emotions instantly!  
+Supported emotions: Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise.
+""")
+
+# -------------------------
+# Constants & Configuration
+# -------------------------
+MODEL_URL = "https://huggingface.co/your-username/emotion-recognition/resolve/main/emotion_recognition_model.h5"
+MODEL_LOCAL_PATH = "emotion_recognition_model.h5"
+CLASS_LABELS = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+
+# -------------------------
+# Load Model & Cascade
+# -------------------------
 @st.cache_resource
-def load_emotion_model():
-    model = load_model("emotion_recognition_model.h5")
+def download_and_load_model():
+    if not os.path.exists(MODEL_LOCAL_PATH):
+        with st.spinner("⏳ Downloading model..."):
+            response = requests.get(MODEL_URL)
+            with open(MODEL_LOCAL_PATH, "wb") as f:
+                f.write(response.content)
+    model = load_model(MODEL_LOCAL_PATH)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
     return model, face_cascade
 
-model, face_cascade = load_emotion_model()
-class_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+model, face_cascade = download_and_load_model()
 
-# Title
-st.title("😄 Emotion Detection from Face Image")
-st.write("Upload an image or take a picture to detect emotions.")
+# -------------------------
+# Input Options
+# -------------------------
+uploaded_file = st.file_uploader("📤 Upload an image", type=["jpg", "jpeg", "png"])
+camera_input = st.camera_input("📷 Or take a picture")
 
-# Upload or Camera input
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
-camera_image = st.camera_input("Or take a picture")
+image_data = uploaded_file if uploaded_file else camera_input
 
-# Use whichever image is provided
-image_data = uploaded_file if uploaded_file is not None else camera_image
-
+# -------------------------
+# Processing Image
+# -------------------------
 if image_data is not None:
-    # Convert to OpenCV format
     image = Image.open(image_data).convert("RGB")
     open_cv_image = np.array(image)
     frame = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
@@ -43,16 +67,14 @@ if image_data is not None:
         face_resized = face_resized / 255.0
 
         prediction = model.predict(face_resized)
-        emotion_label = class_labels[np.argmax(prediction)]
+        emotion = CLASS_LABELS[np.argmax(prediction)]
         confidence = np.max(prediction)
 
-        # Draw rectangle and label
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        cv2.putText(frame, f"{emotion_label} ({confidence*100:.1f}%)", (x, y - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        label = f"{emotion} ({confidence*100:.1f}%)"
+        cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
 
-    # Convert back to RGB and show image
-    st.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), caption="Processed Image", use_column_width=True)
+    # Display the result
+    st.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), caption="🧠 Emotion Detection Result", use_column_width=True)
 else:
-    st.info("Please upload an image or take a picture to proceed.")
-
+    st.info("👆 Please upload an image or take a picture to begin.")
